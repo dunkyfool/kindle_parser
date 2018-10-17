@@ -1,19 +1,15 @@
 #!/bin/bash
 
-# 哥布林殺手
-HOME_URL='https://www.wenku8.net/novel/2/2084/'
-# 灰與幻想的格林姆迦爾
-HOME_URL='https://www.wenku8.net/novel/1/1546/'
-
-
 TABLE=TABLE
 JSON=table.json
 DIFF=DIFF
 BAK=BAK
+WANTLIST=WANTLIST
 
 
 # get all novel url
 function getURL {
+  HOME_URL=${1}
   rm -f ${JSON}
   rm -f ${TABLE}
   curl -ks ${HOME_URL}  | iconv -f gbk -t utf-8 | grep -E 'id="title"|colspan|href="[0-9].+.htm"' > ${TABLE}
@@ -37,13 +33,15 @@ function checkUpdate {
     cat ${DIFF} >> ${JSON}
   else
     echo "[INFO] No Update"
-    exit 0
+    #exit 0
+    RETURN=0
   fi
 }
 
 
 # download all chapters
 function download {
+  HOME_URL=${1}
   python download.py ${JSON} ${HOME_URL}
 }
 
@@ -93,12 +91,25 @@ function archive {
 
 # main
 function main {
-  getURL
-  checkUpdate
-  download
-  parse
-  send
-  archive
+  for LINE in $(cat ${WANTLIST}); do
+    if [[ ${LINE} =~ "HOME" ]]; then
+      HOME_URL=$(echo ${LINE} | cut -d"'" -f2)
+      getURL ${HOME_URL}
+
+      RETURN=1
+      checkUpdate
+
+      if [ "${RETURN}" = "1" ]; then
+        download ${HOME_URL}
+	parse
+	send
+	archive
+      fi
+
+    else 
+      echo "[INFO] Check ${LINE}"
+    fi 
+  done 
 }
 
 
