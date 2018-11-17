@@ -48,19 +48,26 @@ function download {
 
 # parse content & change to utf-8
 function parse {
-  TITLE=$(grep Title ${JSON}| cut -d':' -f2)
+  TITLE=$(grep Title ${JSON}| cut -d':' -f2|head -n1)
   CH_arr=$(grep Ep ${JSON}| cut -d':' -f2| cut -d';' -f1)
+  #echo "[DEBUG] TITLE ${TITLE}"
+  #echo "[DEBUG] CH ${CH_arr}"
   for CH in ${CH_arr[@]}; do
     COLLECTION=${TITLE}/${CH}
     NAME="${TITLE} ${CH}.txt"
 
     echo "[INFO] Parse ${NAME}"
+    #echo "[DEBUG] TOTLE TXT: ${COLLECTION}/${NAME}"
     rm -f TMP
     rm -f "${COLLECTION}/${NAME}"
     for file in `ls ${COLLECTION} | sort -n`;
     do
+      #echo "[DEBUG] EACH TXT${COLLECTION}/${file}"
+      #read -p 'PAUSE' x
       python parse.py content ${COLLECTION}/${file}
     done
+    #cat TMP
+    #read -p 'PAUSE' x
     mv TMP "${COLLECTION}/${NAME}"
   done
 }
@@ -69,7 +76,7 @@ function parse {
 # send to kindle
 function send {
   echo "[INFO] Send TXT File to Kindle"
-  TITLE=$(grep Title ${JSON}| cut -d':' -f2)
+  TITLE=$(grep Title ${JSON}| cut -d':' -f2|head -n1)
   CH_arr=$(grep Ep ${JSON}| cut -d':' -f2| cut -d';' -f1)
   for CH in ${CH_arr[@]}; do
     COLLECTION=${TITLE}/${CH}
@@ -82,7 +89,7 @@ function send {
 
 
 function archive {
-  TITLE=$(grep Title ${JSON}| cut -d':' -f2)
+  TITLE=$(grep Title ${JSON}| cut -d':' -f2|head -n1)
   mv ${BAK} ${JSON}
   cp ${TABLE} ${TITLE}
   cp ${JSON} ${TITLE}
