@@ -21,8 +21,12 @@ function getURL {
 
 # check whether there are new novels or not
 function checkUpdate {
-  TITLE=$(grep Title ${JSON}| cut -d':' -f2)
-  if [ -e ${TITLE}/${JSON} ]; then
+  TITLE=$(grep Title ${JSON}| cut -d':' -f2|head -n1)
+  TITLE=${TITLE// /_}
+  if [ ! -d ${TITLE} ]; then
+    mkdir -p ${TITLE}
+  fi
+  if [ ! -f ${TITLE}/${JSON} ]; then
     touch ${TITLE}/${JSON}
   fi
   comm -3 ${JSON} ${TITLE}/${JSON} > ${DIFF}
@@ -49,6 +53,7 @@ function download {
 # parse content & change to utf-8
 function parse {
   TITLE=$(grep Title ${JSON}| cut -d':' -f2|head -n1)
+  TITLE=${TITLE// /_}
   CH_arr=$(grep Ep ${JSON}| cut -d':' -f2| cut -d';' -f1)
   #echo "[DEBUG] TITLE ${TITLE}"
   #echo "[DEBUG] CH ${CH_arr}"
@@ -77,6 +82,7 @@ function parse {
 function send {
   echo "[INFO] Send TXT File to Kindle"
   TITLE=$(grep Title ${JSON}| cut -d':' -f2|head -n1)
+  TITLE=${TITLE// /_}
   CH_arr=$(grep Ep ${JSON}| cut -d':' -f2| cut -d';' -f1)
   for CH in ${CH_arr[@]}; do
     COLLECTION=${TITLE}/${CH}
@@ -90,6 +96,7 @@ function send {
 
 function archive {
   TITLE=$(grep Title ${JSON}| cut -d':' -f2|head -n1)
+  TITLE=${TITLE// /_}
   mv ${BAK} ${JSON}
   cp ${TABLE} ${TITLE}
   cp ${JSON} ${TITLE}
