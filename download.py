@@ -12,6 +12,7 @@ def main():
       line = line.rstrip()
       if 'Title' in line:
           title = line.split(':')[1]
+          title = title.replace(' ','_')
           os.system('mkdir -p "'+title+'"')
       if 'Ep' in line:
           ctr = 0

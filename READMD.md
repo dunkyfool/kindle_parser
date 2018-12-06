@@ -1,4 +1,5 @@
 If you want to add new book, please follow instruction below:
 
-1. Draft the book name & URL in WANTLIST. Please avoid the space in the name!
-2. Create the folder & empty table.json
+Draft the book name & URL in WANTLIST. Please make sure the book name is same with Title.
+If there is the space in the title, please extract the first section.
+Sorry for the inconvenience caused.
