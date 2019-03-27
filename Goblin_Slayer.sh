@@ -89,6 +89,12 @@ function send {
     NAME="${TITLE} ${CH}.txt"
 
     echo "[INFO] Send ${NAME}"
+
+    if [ ! -f "${COLLECTION}/${NAME}" ]; then
+      echo "[ERRO] File not found!"
+      exit 1
+    fi
+
     python send.py "${COLLECTION}/${NAME}"
   done
 }
@@ -116,7 +122,7 @@ function main {
       if [ "${RETURN}" = "1" ]; then
         download ${HOME_URL}
 	parse
-	send
+	#send
 	archive
       fi
 
